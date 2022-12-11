@@ -1,6 +1,6 @@
 /*
 *	Car Alarm - Bots Block
-*	Copyright (C) 2021 Silvers
+*	Copyright (C) 2022 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION 		"1.4"
+#define PLUGIN_VERSION 		"1.5"
 
 /*======================================================================================
 	Plugin Info:
@@ -31,6 +31,9 @@
 
 ========================================================================================
 	Change Log:
+
+1.5 (11-Dec-2022)
+	- Changes to fix compile warnings on SourceMod 1.11.
 
 1.4 (28-Jul-2021)
 	- Fixed errors on Linux. Thanks to "ReCreator" for reporting.
@@ -191,12 +194,12 @@ public void OnConfigsExecuted()
 	IsAllowed();
 }
 
-public void ConVarChanged_Allow(Handle convar, const char[] oldValue, const char[] newValue)
+void ConVarChanged_Allow(Handle convar, const char[] oldValue, const char[] newValue)
 {
 	IsAllowed();
 }
 
-public void ConVarChanged_Cvars(Handle convar, const char[] oldValue, const char[] newValue)
+void ConVarChanged_Cvars(Handle convar, const char[] oldValue, const char[] newValue)
 {
 	GetCvars();
 }
@@ -283,7 +286,7 @@ bool IsAllowedGameMode()
 	return true;
 }
 
-public void OnGamemode(const char[] output, int caller, int activator, float delay)
+void OnGamemode(const char[] output, int caller, int activator, float delay)
 {
 	if( strcmp(output, "OnCoop") == 0 )
 		g_iCurrentMode = 1;
@@ -346,7 +349,7 @@ public void OnEntityCreated(int entity, const char[] classname)
 }
 
 // Nothing worked to return the client index who triggered the detour on Linux, so using OnTouch method to block bots
-public void OnTouch(int entity, int client)
+void OnTouch(int entity, int client)
 {
 	if( client >= 1 && client <= MaxClients && GetClientTeam(client) == 2 )
 	{
@@ -358,7 +361,7 @@ public void OnTouch(int entity, int client)
 }
 
 // Real survivor clients can trigger when shooting
-public Action OnTakeDamage(int entity, int &client, int &inflictor, float &damage, int &damagetype)
+Action OnTakeDamage(int entity, int &client, int &inflictor, float &damage, int &damagetype)
 {
 	if( client >= 1 && client <= MaxClients && GetClientTeam(client) == 2 )
 	{
@@ -374,6 +377,8 @@ public Action OnTakeDamage(int entity, int &client, int &inflictor, float &damag
 		g_fLastDmg = GetGameTime();
 	}
 	*/
+
+	return Plugin_Continue;
 }
 
 void TriggerAlarm(int entity, int client)
@@ -387,7 +392,7 @@ void TriggerAlarm(int entity, int client)
 }
 
 /* DETOUR METHOD:
-public MRESReturn InputSurvivorStandingOnCar(Handle hReturn, Handle hParams)
+MRESReturn InputSurvivorStandingOnCar(Handle hReturn, Handle hParams)
 {
 	if( g_bCvarAllow )
 	{
