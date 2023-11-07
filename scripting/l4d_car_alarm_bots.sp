@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION 		"1.5"
+#define PLUGIN_VERSION 		"1.6"
 
 /*======================================================================================
 	Plugin Info:
@@ -31,6 +31,9 @@
 
 ========================================================================================
 	Change Log:
+
+1.6 (07-Nov-2023)
+	- Fixed not deleting 1 handle on plugin start.
 
 1.5 (11-Dec-2022)
 	- Changes to fix compile warnings on SourceMod 1.11.
@@ -149,6 +152,8 @@ public void OnPluginStart()
 
 	g_iOffset = GameConfGetOffset(hGameData, "Alarm_Patch_Offset");
 	if( g_iOffset == -1 ) SetFailState("\n==========\nMissing required offset: \"Alarm_Patch_Offset\".\nPlease update your GameData file for this plugin.\n==========");
+
+	delete hGameData;
 
 
 
